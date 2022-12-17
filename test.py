@@ -4,7 +4,7 @@ import pymorphy2
 import pandas as pd
 import pickle
 
-with open(r"C:\Users\aleks\PycharmProjects\BBProgBot\pkl\model.pkl", "rb") as f:
+with open(r"C:\Users\aleks\PycharmProjects\BBProgBot\pkl\model5.pkl", "rb") as f:
     model = pickle.load(f)
 tokenizer = RegexpTokenizer(r'\w+')  # объявление токенизатора
 morph = pymorphy2.MorphAnalyzer()  # объявление лемматизатора
