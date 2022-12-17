@@ -14,17 +14,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pymorphy2
 import pandas as pd
 
-with open(r'C:\Users\aleks\PycharmProjects\BBProgBot\pkl\model5.pkl', "rb") as f:
+with open(r'C:\Users\iamfi\DataspellProjects\BBProgBot\pkl\model5.pkl', "rb") as f:
     model = pickle.load(f)
 
 tokenizer = RegexpTokenizer(r'\w+')
 morph = pymorphy2.MorphAnalyzer()
 tfidfconverter = TfidfVectorizer()
 
-data = pd.read_csv(r'C:\Users\aleks\PycharmProjects\BBProgBot\pkl\train_data.csv')
+data = pd.read_csv(r'C:\Users\iamfi\DataspellProjects\BBProgBot\handlers\translated_data2.csv')
 X_train = tfidfconverter.fit_transform(data["utterance"]).toarray()
-# y_train = data["answer"]
-# model.fit(X_train, y_train)
 
 
 @dp.message_handler(commands=['start'])
@@ -39,14 +37,16 @@ async def start(message: types.Message):
                                                  f"доставки, жалоба, отзыв, проверка счета, получение чека, "
                                                  f"отмена, отслеживание, размещение заказа, способы и проблемы с оплатой "
                                                  f"возврат, адрес доставки.\n"
-                                                 f"Введите /help , чтобы узнать функционал бота.", reply_markup=kb.helpp)
+                                                 f"Введите /help , чтобы узнать функционал бота.",
+                           reply_markup=kb.helpp)
 
 
 @dp.message_handler(state=LoginUser.state_, commands=['help'])
 async def help_me(message: types.Message):
     await LoginOperator.state_.set()
     await bot.send_message(message.from_user.id, f"Список команд:"
-                                                 f"/find - Команда поиска клиента для оператора\n", reply_markup=kb.helpp)
+                                                 f"/find - Команда поиска клиента для оператора\n",
+                           reply_markup=kb.helpp)
 
 
 @dp.callback_query_handler(lambda call: call.data == 'helpp', state=LoginUser.state_)
@@ -130,11 +130,10 @@ async def start(message: types.Message):
 async def start(message: types.Message):
     request = message.text
     try:
-        print(model.predict(tfidfconverter.transform(
-            [' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize('а как создать аккаунт')])]).toarray()))
-        # res = model.predict(tfidfconverter.transform(
-        #     [' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize(f'{request}')])]).toarray())
-        # await message.answer(res[0])
+        print(request)
+        # print(model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize('я хочу узнать мой адрес доставки')])]).toarray()))
+        res = model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize(f'{request}')])]).toarray())
+        await message.answer(res[0])
     except Exception as ex_:
         print(ex_)
 
