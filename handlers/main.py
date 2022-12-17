@@ -1,5 +1,3 @@
-import asyncio
-
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
@@ -41,15 +39,16 @@ async def del_queue(callback: types.CallbackQuery):
     await bot.send_message(callback.from_user.id, 'Поиск остановлен.')
 
 
-@dp.callback_query_handler(lambda call: call.data == 'stop_button')
-async def stop(callback: types.CallbackQuery):
-    chat_info = await db.get_active_chat(callback.from_user.id)
-    if chat_info != False:
-        await db.delete_chat(chat_info[0])
-        await bot.send_message(chat_info[1], "Собеседник покинул чат")
-        await bot.send_message(callback.from_user.id, "Вы вышли из чата")
-    else:
-        await bot.send_message(callback.from_user.id, "Вы не начали чат.")
+@dp.message_handler(commands=["stop"])
+async def start(message: types.Message):
+    try:
+        chat_info = await db.get_active_chat(message.from_user.id)
+        if chat_info != False:
+            await db.delete_chat(chat_info[0])
+            await bot.send_message(chat_info[1], "Собеседник покинул чат", reply_markup=types.ReplyKeyboardRemove())
+            await bot.send_message(message.from_user.id, "Вы вышли из чата", reply_markup=types.ReplyKeyboardRemove())
+    except Exception as ex_:
+        await bot.send_message(message.from_user.id, "Вы не начали чат.")
 
 
 @dp.message_handler()

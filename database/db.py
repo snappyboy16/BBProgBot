@@ -62,7 +62,7 @@ async def get_chat(chat_id):
 
 
 async def get_active_chat(chat_id):
-    '''ВНИМАНИЕ!!! КОСТЫЛЬНЫЙ КОД!'''
+    '''Получение активного чата'''
     async with aiosqlite.connect(r'database/users_id.db') as db:
         chat = await db.execute(f"""SELECT * FROM chats WHERE chat1 = {chat_id}""", ())
         chat = await chat.fetchall()
@@ -85,7 +85,7 @@ async def get_active_chat(chat_id):
 
 
 async def check_active_chat(chat_id):
-    '''ВНИМАНИЕ!!! КОСТЫЛЬНЫЙ КОД!'''
+    '''Проверка на чат'''
     async with aiosqlite.connect(r'database/users_id.db') as db:
         chat = await db.execute(f"""SELECT * FROM chats""", ())
         chat = await chat.fetchall()
@@ -102,12 +102,13 @@ async def check_active_chat(chat_id):
 
 
 async def create_chat(one, two):
-    """Добавляем chat_id пользователя в БД"""
+    """Добавляем чат"""
     async with aiosqlite.connect(r'database/users_id.db') as db:
         if two != False:
             # Создание чата
             await db.execute(f"""DELETE FROM queue_user WHERE user_id = {two}""")
             await db.execute(f"""INSERT INTO chats (chat1, chat2) VAlUES({one}, {two})""")
+            await db.execute(f"""UPDATE queue_operator set busy = 0 WHERE operator_id = {one}""")
             await db.commit()
             return True
         else:
