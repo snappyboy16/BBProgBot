@@ -3,6 +3,8 @@ import asyncio
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+
+import config
 from database import db
 from start_bot import dp, bot
 from keyboards import user_kb, operator_kb
@@ -14,16 +16,22 @@ async def start(message: types.Message):
                          f"созданный, чтобы помогать вам с вашими вопросами.")
 
 
-
 @dp.message_handler(commands=["help"])
 async def start(message: types.Message):
-    chat_two = await db.get_chat()
+    chat_two = await db.get_chat(message.chat.id)
     if await db.create_chat(message.chat.id, chat_two) == False:
         await db.add_queue(message.from_user.id)
-        await bot.send_message(message.chat.id, f"Поиск доступного оператора...", reply_markup=user_kb.cancel)
+        if message.chat.id in config.admins:
+            await bot.send_message(message.chat.id, f"Поиск доступного клиента...", reply_markup=user_kb.cancel)
+        else:
+            await bot.send_message(message.chat.id, f"Поиск доступного оператора...", reply_markup=user_kb.cancel)
     else:
-        await bot.send_message(message.chat.id, "Оператор найден!", reply_markup=user_kb.stop)
-        await bot.send_message(chat_two, "Оператор найден!", reply_markup=user_kb.stop)
+        if message.chat.id in config.admins:
+            await bot.send_message(message.chat.id, "Клиент найден!", reply_markup=user_kb.stop)
+            await bot.send_message(chat_two, "Оператор найден!", reply_markup=user_kb.stop)
+        else:
+            await bot.send_message(chat_two, "Клиент найден!", reply_markup=user_kb.stop)
+            await bot.send_message(message.chat.id, "Оператор найден!", reply_markup=user_kb.stop)
 
 
 @dp.callback_query_handler(lambda call: call.data == 'cancel_button')
@@ -42,6 +50,33 @@ async def stop(callback: types.CallbackQuery):
         await bot.send_message(callback.from_user.id, "Вы вышли из чата")
     else:
         await bot.send_message(callback.from_user.id, "Вы не начали чат.")
+
+
+@dp.message_handler()
+async def start(message: types.Message):
+    get_active_chat = await db.check_active_chat(message.chat.id)
+    if get_active_chat != False:
+        one = get_active_chat[1]
+        two = get_active_chat[2]
+        dct = {
+            one: two,
+            two: one
+        }
+        my_id = message.from_user.id
+        await bot.send_message(dct[str(my_id)], message.text)
+
+    else:
+        pass
+
+
+
+
+
+
+
+
+
+
 
 
 
