@@ -14,14 +14,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pymorphy2
 import pandas as pd
 
-with open(r'C:\Users\iamfi\DataspellProjects\BBProgBot\pkl\model5.pkl', "rb") as f:
+with open(r'C:\Users\aleks\PycharmProjects\BBProgBot\pkl\model5.pkl', "rb") as f:
     model = pickle.load(f)
 
 tokenizer = RegexpTokenizer(r'\w+')
 morph = pymorphy2.MorphAnalyzer()
 tfidfconverter = TfidfVectorizer()
 
-data = pd.read_csv(r'C:\Users\iamfi\DataspellProjects\BBProgBot\handlers\translated_data2.csv')
+data = pd.read_csv(r'C:\Users\aleks\PycharmProjects\BBProgBot\handlers\translated_data2.csv')
 X_train = tfidfconverter.fit_transform(data["utterance"]).toarray()
 
 
@@ -37,8 +37,7 @@ async def start(message: types.Message):
                                                  f"доставки, жалоба, отзыв, проверка счета, получение чека, "
                                                  f"отмена, отслеживание, размещение заказа, способы и проблемы с оплатой "
                                                  f"возврат, адрес доставки.\n"
-                                                 f"Введите /help , чтобы узнать функционал бота.",
-                           reply_markup=kb.helpp)
+                                                 f"Введите /help , чтобы узнать функционал бота.")
 
 
 @dp.message_handler(state=LoginUser.state_, commands=['help'])
@@ -49,7 +48,7 @@ async def help_me(message: types.Message):
                            reply_markup=kb.helpp)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'helpp', state=LoginUser.state_)
+@dp.callback_query_handler(lambda call: call.data == 'not_pomog', state=LoginUser.state_)
 async def helpp(callback: types.CallbackQuery):
     await bot.answer_callback_query(callback.id)
     chat_two = await db.get_chat(callback.from_user.id)
@@ -110,18 +109,23 @@ async def stop(message: types.Message):
         await bot.send_message(message.from_user.id, "Вы не начали чат.")
 
 
-@dp.message_handler()
+@dp.message_handler(content_types=['photo', 'text'])
 async def start(message: types.Message):
     get_active_chat = await db.check_active_chat(message.chat.id)
     if get_active_chat != False:
+        my_id = message.from_user.id
         one = get_active_chat[1]
         two = get_active_chat[2]
         dct = {
             one: two,
             two: one
         }
-        my_id = message.from_user.id
-        await bot.send_message(dct[str(my_id)], message.text)
+        if message.text:
+            await bot.send_message(dct[str(my_id)], message.text)
+        elif message.photo:
+            await bot.send_photo(dct[str(my_id)], message.photo[-1].file_id)
+        else:
+            pass
     else:
         pass
 
@@ -130,12 +134,18 @@ async def start(message: types.Message):
 async def start(message: types.Message):
     request = message.text
     try:
-        print(request)
-        # print(model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize('я хочу узнать мой адрес доставки')])]).toarray()))
         res = model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize(f'{request}')])]).toarray())
-        await message.answer(res[0])
+        await message.answer(res[0], reply_markup=kb.bot_pomog)
     except Exception as ex_:
         print(ex_)
+
+
+@dp.callback_query_handler(lambda call: call.data == 'pomog', state=LoginUser.state_)
+async def del_queue(callback: types.CallbackQuery):
+    await bot.answer_callback_query(callback.id)
+    await bot.send_message(callback.from_user.id, 'Спасибо, что пользуетесь нашими услугами!\n'
+                                                  'Не забудьте зайти в наше сообщество Вконтакте\n'
+                                                  'https://vk.cc/cjOXsu')
 
 
 @dp.message_handler(state=LoginUser.state_, commands=["login"])
