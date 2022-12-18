@@ -1,9 +1,10 @@
-TOKEN = '5889185009:AAEZA83cznvBMA9qYjYEdoKNWJHbhEP3SWU'
+TOKEN = '5967754597:AAHsl8PvcRcnNeAcc0YytE8nBIAbKbwjnLw'
 
 admins = [
     1205630682
 ]
 
 operators = [
-    1205630682
+    1070932202,
+    708520196,
 ]

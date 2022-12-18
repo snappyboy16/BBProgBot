@@ -11,7 +11,7 @@ async def add_id(id):
 
 async def add_queue(chat_id):
     """Добавляем chat_id пользователя в БД"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             await db.execute(f"""UPDATE queue_operator set busy = 1 WHERE operator_id = {chat_id}""")
             await db.commit()
@@ -23,7 +23,7 @@ async def add_queue(chat_id):
 
 async def delete_queue(chat_id):
     """Удаляем chat_id пользователя в БД или делаем оператора не занятым"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             await db.execute(f"""UPDATE queue_operator set busy = 0 WHERE operator_id = {chat_id}""")
             await db.commit()
@@ -42,7 +42,7 @@ async def delete_chat(id_chat):
 
 async def get_chat(chat_id):
     """Проверяем доступный чат"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             res = await db.execute(f"""SELECT * FROM queue_user""", ())
             rows = await res.fetchmany(1)
@@ -115,3 +115,14 @@ async def create_chat(one, two):
             # Становимся в очередь
             return False
 
+
+async def add_operator(chat_id):
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        await db.execute(f"""INSERT INTO queue_operator (operator_id) VALUES({chat_id})""")
+        await db.commit()
+
+
+async def del_operator(chat_id):
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        await db.execute(f"""DELETE FROM queue_operator WHERE operator_id = {chat_id}""")
+        await db.commit()

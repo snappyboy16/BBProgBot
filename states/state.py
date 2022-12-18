@@ -7,3 +7,11 @@ class LoginOperator(StatesGroup):
 
 class LoginUser(StatesGroup):
     state_ = State()
+
+
+class LoginAdmin(StatesGroup):
+    state_ = State()
+
+
+class InChat(StatesGroup):
+    state_ = State()
