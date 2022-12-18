@@ -38,7 +38,71 @@ async def start(message: types.Message):
                                                  f"отмена, отслеживание, размещение заказа, способы и проблемы с оплатой "
                                                  f"возврат, адрес доставки.\n"
                                                  f"Введите /help , чтобы узнать функционал бота.",
-                           reply_markup=kb.helpp)
+                           reply_markup=kb.old)
+
+
+@dp.callback_query_handler(lambda call: call.data and call.data.startswith('key_'), state=LoginUser.state_)
+async def process_callback_btn_delete(callback_query: types.CallbackQuery):
+    if callback_query.data.split('key_')[1] == 'account':
+        await bot.send_message(callback_query.from_user.id, text='Проблемы с аккаунтом?', reply_markup=kb.accounts)
+    if callback_query.data.split('key_')[1] == 'contact':
+        await bot.send_message(callback_query.from_user.id, text='Наши контакты', reply_markup=kb.contacts)
+    if callback_query.data.split('key_')[1] == 'deliver':
+        await bot.send_message(callback_query.from_user.id, text='Проблемы с доставкой?', reply_markup=kb.delivers)
+    if callback_query.data.split('key_')[1] == 'feedback':
+        await bot.send_message(callback_query.from_user.id, text='Обратную связь можно осуществить ниже', reply_markup=kb.feedbacks)
+    if callback_query.data.split('key_')[1] == 'check':
+        await bot.send_message(callback_query.from_user.id, text='Всё о чеках', reply_markup=kb.checks)
+    if callback_query.data.split('key_')[1] == 'order':
+        await bot.send_message(callback_query.from_user.id, text='Всё о заказах', reply_markup=kb.orders)
+    if callback_query.data.split('key_')[1] == 'payment':
+        await bot.send_message(callback_query.from_user.id, text='Всё об оплате', reply_markup=kb.payments)
+    if callback_query.data.split('key_')[1] == 'refund':
+        await bot.send_message(callback_query.from_user.id, text='Всё о возвратах', reply_markup=kb.refunds)
+
+
+@dp.callback_query_handler(lambda call: call.data and call.data.startswith('btn_'), state=LoginUser.state_)
+async def process_callback_btn_delete(callback_query: types.CallbackQuery):
+    if callback_query.data.split('btn_')[1] == 'create':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы создать аккаунт, создайте аккаунт')
+    if callback_query.data.split('btn_')[1] == 'delete':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы удалить аккаунт, удалите аккаунт')
+    if callback_query.data.split('btn_')[1] == 'edit':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы редактировать аккаунт, редактируйте аккаунт')
+    if callback_query.data.split('btn_')[1] == 'recover':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы восстановить пароль, восстановите пароль')
+    if callback_query.data.split('btn_')[1] == 'switch':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы сменить аккаунт, смените аккаунт')
+    if callback_query.data.split('btn_')[1] == 'support':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы обратиться в тех.поддержку, обратитесь')
+    if callback_query.data.split('btn_')[1] == 'human':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы обратиться к оператору, обратитесь')
+    if callback_query.data.split('btn_')[1] == 'options':
+        await bot.send_message(callback_query.from_user.id, text='Варианты доставки следующие:')
+    if callback_query.data.split('btn_')[1] == 'period':
+        await bot.send_message(callback_query.from_user.id, text='Сроки доставки следующие:')
+    if callback_query.data.split('btn_')[1] == 'complaint':
+        await bot.send_message(callback_query.from_user.id, text='Жалобу можно оформить так:')
+    if callback_query.data.split('btn_')[1] == 'review':
+        await bot.send_message(callback_query.from_user.id, text='Отзыв можно оформить так:')
+    if callback_query.data.split('btn_')[1] == 'get':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы получить чек заказа, получите его')
+    if callback_query.data.split('btn_')[1] == 'cancel':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы отменить заказ, отмените его')
+    if callback_query.data.split('btn_')[1] == 'place':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы разместить объявление, разместите его')
+    if callback_query.data.split('btn_')[1] == 'track0':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы отследить заказ, отследите его')
+    if callback_query.data.split('btn_')[1] == 'method':
+        await bot.send_message(callback_query.from_user.id, text='Доступные способы оплаты:')
+    if callback_query.data.split('btn_')[1] == 'issue':
+        await bot.send_message(callback_query.from_user.id, text='Возможные решения проблемы')
+    if callback_query.data.split('btn_')[1] == 'policy':
+        await bot.send_message(callback_query.from_user.id, text='Политика возвратов такова')
+    if callback_query.data.split('btn_')[1] == 'got':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы оформить возврат нужно')
+    if callback_query.data.split('btn_')[1] == 'track1':
+        await bot.send_message(callback_query.from_user.id, text='Чтобы отследить возврат нужно')
 
 
 @dp.message_handler(state=LoginUser.state_, commands=['help'])
@@ -132,7 +196,8 @@ async def start(message: types.Message):
     try:
         print(request)
         # print(model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize('я хочу узнать мой адрес доставки')])]).toarray()))
-        res = model.predict(tfidfconverter.transform([' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize(f'{request}')])]).toarray())
+        res = model.predict(tfidfconverter.transform(
+            [' '.join([morph.parse(word)[0][2] for word in tokenizer.tokenize(f'{request}')])]).toarray())
         await message.answer(res[0])
     except Exception as ex_:
         print(ex_)
