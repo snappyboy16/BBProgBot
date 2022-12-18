@@ -1,4 +1,6 @@
 from aiogram.utils import executor
+
+import config
 from start_bot import dp
 from handlers import main
 

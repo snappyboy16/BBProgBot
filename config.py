@@ -1,10 +1,9 @@
-TOKEN = '5967754597:AAHsl8PvcRcnNeAcc0YytE8nBIAbKbwjnLw'
+from database import db
+
+TOKEN = '5889185009:AAEZA83cznvBMA9qYjYEdoKNWJHbhEP3SWU'
 
 admins = [
     1205630682
 ]
 
-operators = [
-    1070932202,
-    708520196,
-]
+operators = []

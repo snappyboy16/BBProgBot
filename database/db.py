@@ -2,13 +2,6 @@ import aiosqlite
 import config
 
 
-async def add_id(id):
-    """Добавляем id пользователя в БД"""
-    async with aiosqlite.connect('users_id.db') as db:
-        await db.execute(f"""INSERT INTO all_id (user_id) VAlUES({id})""")
-        await db.commit()
-
-
 async def add_queue(chat_id):
     """Добавляем chat_id пользователя в БД"""
     if chat_id in config.operators:
@@ -126,3 +119,13 @@ async def del_operator(chat_id):
     async with aiosqlite.connect(r'database/users_id.db') as db:
         await db.execute(f"""DELETE FROM queue_operator WHERE operator_id = {chat_id}""")
         await db.commit()
+
+
+async def get_all_operators():
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        result = []
+        res = await db.execute(f"""SELECT operator_id FROM queue_operator""")
+        res = await res.fetchall()
+        for i in res:
+            result.append(i[0])
+        return result
