@@ -36,7 +36,7 @@ async def start(message: types.Message):
                                                  f"доставки, жалоба, отзыв, проверка счета, получение чека, "
                                                  f"отмена, отслеживание, размещение заказа, способы и проблемы с оплатой "
                                                  f"возврат, адрес доставки.\n"
-                                                 f"Введите /help , чтобы узнать функционал бота."
+                                                 f"Введите /help , чтобы узнать функционал бота.\n"
                                                  f"Чтобы использовать новый режим, вы должны войти в аккаунт.", reply_markup=kb.main_klava)
     config.operators = await db.get_all_operators()
     await NotLogin.state_.set()
@@ -68,12 +68,18 @@ async def stop(message: types.Message, state: FSMContext):
     try:
         chat_info = await db.get_active_chat(message.from_user.id)
         if chat_info != False:
+            await db.delete_queue(chat_info[1])
             await db.delete_chat(chat_info[0])
             await state.finish()
             if message.from_user.id in config.operators:
                 await LoginOperator.state_.set()
+                await bot.send_message(chat_info[1], "Начался автоматический поиск нового собеседника.",
+                                       reply_markup=kb.cancel_search)
             else:
                 await LoginUser.state_.set()
+                await bot.send_message(message.from_user.id, "Начался атоматический поиск нового собеседника.",
+                                       reply_markup=kb.cancel_search)
+
             await bot.send_message(chat_info[1], "Собеседник покинул чат.", reply_markup=types.ReplyKeyboardRemove())
             await bot.send_message(message.from_user.id, "Вы вышли из чата.", reply_markup=types.ReplyKeyboardRemove())
     except Exception as ex_:
