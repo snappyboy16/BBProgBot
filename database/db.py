@@ -2,16 +2,9 @@ import aiosqlite
 import config
 
 
-async def add_id(id):
-    """Добавляем id пользователя в БД"""
-    async with aiosqlite.connect('users_id.db') as db:
-        await db.execute(f"""INSERT INTO all_id (user_id) VAlUES({id})""")
-        await db.commit()
-
-
 async def add_queue(chat_id):
     """Добавляем chat_id пользователя в БД"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             await db.execute(f"""UPDATE queue_operator set busy = 1 WHERE operator_id = {chat_id}""")
             await db.commit()
@@ -23,13 +16,14 @@ async def add_queue(chat_id):
 
 async def delete_queue(chat_id):
     """Удаляем chat_id пользователя в БД или делаем оператора не занятым"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             await db.execute(f"""UPDATE queue_operator set busy = 0 WHERE operator_id = {chat_id}""")
             await db.commit()
     else:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             await db.execute(f"""DELETE FROM queue_user WHERE user_id = {chat_id}""")
+            await db.execute(f"""UPDATE queue_operator set busy = 0 WHERE operator_id = {chat_id}""")
             await db.commit()
 
 
@@ -42,7 +36,7 @@ async def delete_chat(id_chat):
 
 async def get_chat(chat_id):
     """Проверяем доступный чат"""
-    if chat_id in config.admins:
+    if chat_id in config.operators:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             res = await db.execute(f"""SELECT * FROM queue_user""", ())
             rows = await res.fetchmany(1)
@@ -54,11 +48,12 @@ async def get_chat(chat_id):
     else:
         async with aiosqlite.connect(r'database/users_id.db') as db:
             res = await db.execute(f"""SELECT * FROM queue_operator""", ())
-            rows = await res.fetchmany(1)
+            rows = await res.fetchall()
             for row in rows:
+                print(row)
                 if row[2]:
                     return row[1]
-                return False
+            return False
 
 
 async def get_active_chat(chat_id):
@@ -115,3 +110,24 @@ async def create_chat(one, two):
             # Становимся в очередь
             return False
 
+
+async def add_operator(chat_id):
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        await db.execute(f"""INSERT INTO queue_operator (operator_id) VALUES({chat_id})""")
+        await db.commit()
+
+
+async def del_operator(chat_id):
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        await db.execute(f"""DELETE FROM queue_operator WHERE operator_id = {chat_id}""")
+        await db.commit()
+
+
+async def get_all_operators():
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        result = []
+        res = await db.execute(f"""SELECT operator_id FROM queue_operator""")
+        res = await res.fetchall()
+        for i in res:
+            result.append(i[0])
+        return result

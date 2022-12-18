@@ -1,6 +1,36 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, \
     ReplyKeyboardMarkup, KeyboardButton
 
+main_klava = InlineKeyboardMarkup(resize_keyboard=True)
+old_button = InlineKeyboardButton('Старый режим.', callback_data='old_button')
+new_button = InlineKeyboardButton('Новый режим', callback_data='new_button')
+main_klava.add(old_button, new_button)
+
+
+cancel_search = InlineKeyboardMarkup(resize_keyboard=True)
+cancel_button = InlineKeyboardButton('Остановить поиск.', callback_data='cancel_button')
+cancel_search.add(cancel_button)
+
+stop = ReplyKeyboardMarkup(resize_keyboard=True)
+stop_button = KeyboardButton('/stop')
+stop.add(stop_button)
+
+bot_pomog = InlineKeyboardMarkup(resize_keyboard=True)
+pomog = InlineKeyboardButton('Бот помог мне.', callback_data='pomog')
+not_pomog = InlineKeyboardButton('Обратиться в поддержку.', callback_data='not_pomog')
+bot_pomog.add(pomog, not_pomog)
+
+ssilka = InlineKeyboardMarkup(resize_keyboard=True)
+vk_ssilka = InlineKeyboardButton('Наше Вконтакте', url='https://vk.cc/cjOXsu', callback_data='vk')
+tg_ssilka = InlineKeyboardButton('Наш Телеграмм', url='https://t.me/rksi_ru', callback_data='tg')
+ssilka.add(vk_ssilka, tg_ssilka)
+
+
+find = ReplyKeyboardMarkup(resize_keyboard=True)
+find_button = KeyboardButton('/find')
+find.add(find_button)
+
+
 old = InlineKeyboardMarkup(resize_keyboard=True)
 account = InlineKeyboardButton('УЧЕТНАЯ ЗАПИСЬ', callback_data='key_account')
 contact = InlineKeyboardButton('КОНТАКТЫ', callback_data='key_contact')
@@ -59,15 +89,3 @@ track = InlineKeyboardButton('ОТСЛЕДИТЬ', callback_data='btn_track1')
 refunds.insert(policy)
 refunds.insert(got)
 refunds.add(track)
-
-cancel = InlineKeyboardMarkup(resize_keyboard=True)
-cancel_button = InlineKeyboardButton('Остановить поиск.', callback_data='cancel_button')
-cancel.add(cancel_button)
-
-stop = ReplyKeyboardMarkup(resize_keyboard=True)
-stop_button = KeyboardButton('/stop')
-stop.add(stop_button)
-
-helpp = InlineKeyboardMarkup(resize_keyboard=True)
-helpp_button = InlineKeyboardButton('Перенаправить меня на оператора', callback_data='helpp')
-helpp.add(helpp_button)
