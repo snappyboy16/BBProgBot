@@ -37,7 +37,8 @@ async def start(message: types.Message):
                                                  f"отмена, отслеживание, размещение заказа, способы и проблемы с оплатой "
                                                  f"возврат, адрес доставки.\n"
                                                  f"Введите /help , чтобы узнать функционал бота.\n"
-                                                 f"Чтобы использовать новый режим, вы должны войти в аккаунт.", reply_markup=kb.main_klava)
+                                                 f"Чтобы использовать новый режим, вы должны войти в аккаунт.",
+                           reply_markup=kb.main_klava)
     config.operators = await db.get_all_operators()
     await NotLogin.state_.set()
 
@@ -210,12 +211,12 @@ async def logout(message: types.Message):
         await message.reply('Оператора с таким id нет в базе.')
 
 
-@dp.callback_query_handler(lambda call: call.data == 'old_button')
+@dp.callback_query_handler(lambda call: call.data == 'old_button', state='*')
 async def del_queue(callback: types.CallbackQuery):
     await bot.send_message(callback.from_user.id, 'Включён старый режим.\nВопрос по какой теме вас интересует?', reply_markup=kb.old)
 
 
-@dp.callback_query_handler(lambda call: call.data == 'new_button')
+@dp.callback_query_handler(lambda call: call.data == 'new_button', state='*')
 async def del_queue(callback: types.CallbackQuery):
     await bot.send_message(callback.from_user.id, 'Включён новый режим.\nЗайдите в свой аккаунт командой /login')
 
