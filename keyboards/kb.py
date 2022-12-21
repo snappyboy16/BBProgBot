@@ -3,8 +3,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, \
 
 main_klava = InlineKeyboardMarkup(resize_keyboard=True)
 old_button = InlineKeyboardButton('Старый режим.', callback_data='old_button')
-new_button = InlineKeyboardButton('Новый режим', callback_data='new_button')
-main_klava.add(old_button, new_button)
+main_klava.add(old_button)
 
 
 cancel_search = InlineKeyboardMarkup(resize_keyboard=True)
@@ -32,15 +31,15 @@ find.add(find_button)
 
 
 old = InlineKeyboardMarkup(resize_keyboard=True)
-account = InlineKeyboardButton('УЧЕТНАЯ ЗАПИСЬ', callback_data='key_account')
-contact = InlineKeyboardButton('КОНТАКТЫ', callback_data='key_contact')
-deliver = InlineKeyboardButton('ДОСТАВКА', callback_data='key_deliver')
-feedback = InlineKeyboardButton('ОБРАТНАЯ СВЯЗЬ', callback_data='key_feedback')
-check = InlineKeyboardButton('СЧЁТ', callback_data='key_check')
-order = InlineKeyboardButton('ЗАКАЗ', callback_data='key_order')
-payment = InlineKeyboardButton('ОПЛАТА', callback_data='key_payment')
-refund = InlineKeyboardButton('ВОЗВРАТ', callback_data='key_refund')
-old.add(account, contact, deliver, feedback, check, order, payment, refund)
+account = InlineKeyboardButton('👤 УЧЕТНАЯ ЗАПИСЬ', callback_data='key_account')
+contact = InlineKeyboardButton('📞 КОНТАКТЫ', callback_data='key_contact')
+deliver = InlineKeyboardButton('🚚 ДОСТАВКА', callback_data='key_deliver')
+feedback = InlineKeyboardButton('💬 ОБРАТНАЯ СВЯЗЬ', callback_data='key_feedback')
+check = InlineKeyboardButton('📃 СЧЁТ', callback_data='key_check')
+order = InlineKeyboardButton('📦 ЗАКАЗ', callback_data='key_order')
+payment = InlineKeyboardButton('💳 ОПЛАТА', callback_data='key_payment')
+refund = InlineKeyboardButton('💸 ВОЗВРАТ', callback_data='key_refund')
+old.row(order, check, deliver).row(payment, refund, contact).row(feedback, account)
 
 accounts = InlineKeyboardMarkup(resize_keyboard=True)
 create = InlineKeyboardButton('СОЗДАНИЕ', callback_data='btn_create')
