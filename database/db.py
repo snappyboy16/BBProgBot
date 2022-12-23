@@ -1,5 +1,5 @@
 import aiosqlite
-import config
+from Data import config
 
 
 async def add_queue(chat_id):
@@ -50,7 +50,6 @@ async def get_chat(chat_id):
             res = await db.execute(f"""SELECT * FROM queue_operator""", ())
             rows = await res.fetchall()
             for row in rows:
-                print(row)
                 if row[2]:
                     return row[1]
             return False
@@ -61,20 +60,13 @@ async def get_active_chat(chat_id):
     async with aiosqlite.connect(r'database/users_id.db') as db:
         chat = await db.execute(f"""SELECT * FROM chats WHERE chat1 = {chat_id}""", ())
         chat = await chat.fetchall()
+        chat_info = []
         id_chat = 0
         for row in chat:
             id_chat = row[0]
-            chat_info = [row[0], row[2]]
-        if id_chat == 0:
-            chat = await db.execute(f"""SELECT * FROM chats WHERE chat2 = {chat_id}""", ())
-            chat = await chat.fetchall()
-            for row in chat:
-                id_chat = row[0]
-                chat_info = [row[0], row[1]]
-            if chat_id == 0:
-                return False
-            else:
-                return chat_info
+            chat_info = [row[0], row[1], row[2]]
+        if chat_id == 0:
+            return False
         else:
             return chat_info
 
@@ -131,3 +123,15 @@ async def get_all_operators():
         for i in res:
             result.append(i[0])
         return result
+
+
+async def vi_vishli_iz_chata(chat_id):
+    async with aiosqlite.connect(r'database/users_id.db') as db:
+        chat = await db.execute(f"""SELECT * FROM chats""")
+        chat = await chat.fetchall()
+        for row in chat:
+            print(row[0], row[1], row[2])
+            if row[1] == chat_id:
+                return row[2]
+            elif row[2] == chat_id:
+                return row[1]

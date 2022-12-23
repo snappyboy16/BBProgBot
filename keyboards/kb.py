@@ -16,7 +16,7 @@ stop.add(stop_button)
 
 bot_pomog = InlineKeyboardMarkup(resize_keyboard=True)
 pomog = InlineKeyboardButton('Бот помог мне.', callback_data='pomog')
-not_pomog = InlineKeyboardButton('Обратиться в поддержку.', callback_data='not_pomog')
+not_pomog = InlineKeyboardButton('Обратиться в поддержку.', callback_data='to_operator')
 bot_pomog.add(pomog, not_pomog)
 
 ssilka = InlineKeyboardMarkup(resize_keyboard=True)
